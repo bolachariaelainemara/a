@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Captura de Localização GPS - Analytics</title>
+    <!-- Tailwind CSS CDN para estilização moderna e responsiva -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+
+    <!-- Google tag (gtag.js) - Substitua 'G-XXXXXXXXXX' pelo seu ID real do GA4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      // Configuração inicial do GA4
+      gtag('config', 'G-XXXXXXXXXX');
+    </script>
+</head>
+<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4 text-slate-800">
+
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
+        <!-- Header da Página -->
+        <div class="bg-blue-600 p-6 text-white text-center">
+            <div class="inline-flex p-3 bg-blue-500/50 rounded-full mb-3">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+            </div>
+            <h1 class="text-2xl font-bold">Captura de Localização</h1>
+            <p class="text-blue-100 text-sm mt-1">Envie as coordenadas de GPS diretamente para o Google Analytics</p>
+        </div>
+
+        <!-- Conteúdo Principal -->
+        <div class="p-6 space-y-6">
+            
+            <!-- Botão de Ação -->
+            <button id="btnCapturar" onclick="obterEEnviarLocalizacao()" class="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-3.5 px-4 rounded-xl transition duration-200 shadow-md hover:shadow-lg flex items-center justify-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                </svg>
+                <span>Enviar Minha Localização</span>
+            </button>
+
+            <!-- Área de Mensagem de Status -->
+            <div id="statusBox" class="hidden p-4 rounded-xl border text-sm transition-all duration-300">
+                <p id="statusTexto" class="font-medium text-center"></p>
+            </div>
+
+            <!-- Exibição dos Dados Capturados -->
+            <div id="dadosGPS" class="hidden bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
+                <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Dados Obtidos pelo Celular</h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-white p-3 rounded-lg border border-slate-100 shadow-sm">
+                        <span class="block text-xs text-slate-500">Latitude</span>
+                        <span id="valLat" class="font-mono text-sm font-semibold text-slate-800">--</span>
+                    </div>
+                    <div class="bg-white p-3 rounded-lg border border-slate-100 shadow-sm">
+                        <span class="block text-xs text-slate-500">Longitude</span>
+                        <span id="valLng" class="font-mono text-sm font-semibold text-slate-800">--</span>
+                    </div>
+                </div>
+                <div class="bg-white p-3 rounded-lg border border-slate-100 shadow-sm">
+                    <span class="block text-xs text-slate-500">Precisão Estimada</span>
+                    <span id="valAcc" class="font-mono text-sm font-semibold text-slate-800">--</span>
+                </div>
+            </div>
+
+            <!-- Dica Informativa -->
+            <div class="text-xs text-slate-500 text-center bg-slate-50 p-3 rounded-lg">
+                🔒 O seu navegador solicitará permissão para acessar o GPS do dispositivo.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function obterEEnviarLocalizacao() {
+            const btn = document.getElementById('btnCapturar');
+            const statusBox = document.getElementById('statusBox');
+            const statusTexto = document.getElementById('statusTexto');
+            const dadosGPS = document.getElementById('dadosGPS');
+
+            // Prepara a interface para o carregamento
+            btn.disabled = true;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+            statusBox.classList.remove('hidden', 'bg-red-50', 'border-red-200', 'text-red-700', 'bg-green-50', 'border-green-200', 'text-green-700');
+            statusBox.classList.add('bg-blue-50', 'border-blue-200', 'text-blue-700');
+            statusTexto.innerText = "Solicitando acesso ao GPS...";
+
+            // Verifica se o navegador suporta Geolocalização
+            if (!navigator.geolocation) {
+                exibirErro("Geolocalização não é suportada pelo seu navegador.");
+                resetarBotao();
+                return;
+            }
+
+            // Opções de alta precisão para o GPS do dispositivo
+            const opcoes = {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            };
+
+            // Solicita as coordenadas ao navegador/dispositivo
+            navigator.geolocation.getCurrentPosition(
+                function(posicao) {
+                    const lat = posicao.coords.latitude;
+                    const lng = posicao.coords.longitude;
+                    const acc = posicao.coords.accuracy;
+
+                    // Atualiza a visualização no HTML
+                    document.getElementById('valLat').innerText = lat.toFixed(6);
+                    document.getElementById('valLng').innerText = lng.toFixed(6);
+                    document.getElementById('valAcc').innerText = `~${Math.round(acc)} metros`;
+                    dadosGPS.classList.remove('hidden');
+
+                    // DISPARO DO EVENTO PARA O GOOGLE ANALYTICS
+                    gtag('event', 'envio_localizacao_gps', {
+                        'latitude': lat.toString(),
+                        'longitude': lng.toString(),
+                        'precisao_metros': Math.round(acc),
+                        'metodo_captura': 'navegador_gps'
+                    });
+
+                    // Mensagem de sucesso
+                    statusBox.classList.remove('bg-blue-50', 'border-blue-200', 'text-blue-700');
+                    statusBox.classList.add('bg-green-50', 'border-green-200', 'text-green-700');
+                    statusTexto.innerText = "✓ Coordenadas capturadas e enviadas ao Analytics com sucesso!";
+
+                    resetarBotao();
+                },
+                function(erro) {
+                    // Tratamento de erros de permissão e sinal GPS
+                    let mensagem = "Erro ao capturar localização.";
+                    switch(erro.code) {
+                        case erro.PERMISSION_DENIED:
+                            mensagem = "Permissão negada. Você precisa autorizar o acesso ao GPS no seu navegador.";
+                            break;
+                        case erro.POSITION_UNAVAILABLE:
+                            mensagem = "Informação de localização indisponível no momento.";
+                            break;
+                        case erro.TIMEOUT:
+                            mensagem = "A requisição para obter a localização expirou.";
+                            break;
+                    }
+                    exibirErro(mensagem);
+                    resetarBotao();
+                },
+                opcoes
+            );
+        }
+
+        function exibirErro(msg) {
+            const statusBox = document.getElementById('statusBox');
+            const statusTexto = document.getElementById('statusTexto');
+            statusBox.classList.remove('hidden', 'bg-blue-50', 'border-blue-200', 'text-blue-700');
+            statusBox.classList.add('bg-red-50', 'border-red-200', 'text-red-700');
+            statusTexto.innerText = "⚠️ " + msg;
+        }
+
+        function resetarBotao() {
+            const btn = document.getElementById('btnCapturar');
+            btn.disabled = false;
+            btn.classList.remove('opacity-75', 'cursor-not-allowed');
+        }
+    </script>
+</body>
+</html>
