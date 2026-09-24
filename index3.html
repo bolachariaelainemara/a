@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste GPS via Analytics.js</title>
+
+    <!-- Carrega todo o Analytics e a lógica a partir do ficheiro JS -->
+    <script src="analytics.js" defer></script>
+
+    <!-- Estilização simples com Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="max-w-md w-full bg-white rounded-xl shadow-lg p-6 text-center space-y-4">
+        <h1 class="text-xl font-bold text-slate-800">Teste GPS (analytics.js)</h1>
+        <p class="text-sm text-slate-600">Clique no botão para capturar a localização e enviá-la ao Google Analytics.</p>
+
+        <!-- Botão de Ação -->
+        <button id="btnEnviar" onclick="enviarGPS()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition">
+            Enviar Minha Localização
+        </button>
+
+        <!-- Mensagem de Status -->
+        <div id="status" class="hidden"></div>
+
+        <!-- Exibição das Coordenadas -->
+        <div id="resultado" class="hidden text-left bg-slate-50 p-3 rounded-lg border text-xs font-mono space-y-1">
+            <p><strong>Latitude:</strong> <span id="lat">--</span></p>
+            <p><strong>Longitude:</strong> <span id="lng">--</span></p>
+        </div>
+    </div>
+
+</body>
+</html>
