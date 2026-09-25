@@ -8,11 +8,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Inter e JetBrains Mono para o relógio -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
+        }
+        .font-mono-clock {
+            font-family: 'JetBrains Mono', monospace;
         }
         .fade-in {
             animation: fadeIn 0.35s ease-in-out forwards;
@@ -37,6 +40,7 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
 
+    <!-- MOTOR INTERNO DO ANALYTICS (FALLBACK DE TELEMETRIA) -->
     <script>
         if (typeof window.AnalyticsEngine === 'undefined') {
             window.AnalyticsEngine = {
@@ -55,7 +59,7 @@
         }
     </script>
 
-    <!-- HEADER / NAVEGAÇÃO SUPERIOR -->
+    <!-- HEADER SUPERIOR -->
     <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -81,7 +85,7 @@
     <!-- CONTEÚDO PRINCIPAL -->
     <main class="flex-grow flex items-center justify-center p-4 md:p-8">
         
-        <!-- VISÃO 1: FORMULÁRIO DE LOGIN -->
+        <!-- VISÃO 1: TELA DE LOGIN -->
         <section id="loginView" class="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl shadow-indigo-950/40 fade-in">
             <div class="text-center mb-6">
                 <h1 class="text-2xl font-bold text-white tracking-tight mb-2">Acessar o Sistema</h1>
@@ -126,81 +130,101 @@
 
             <div class="mt-6 pt-5 border-t border-slate-800/80 text-center">
                 <p class="text-xs text-slate-400 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800">
-                    <span class="text-indigo-400 font-semibold">Credenciais de Teste:</span><br>
-                    Usuário: <code class="text-amber-300">admin</code> | Senha: <code class="text-amber-300">1234</code>
+                    <span class="text-indigo-400 font-semibold">Credenciais Válidas:</span><br>
+                    Usuário: <code class="text-amber-300 font-mono">admin</code> | Senha: <code class="text-amber-300 font-mono">1234</code>
                 </p>
             </div>
         </section>
 
-        <!-- VISÃO 2: TELA PÓS-LOGIN (DASHBOARD) -->
+        <!-- VISÃO 2: TELA PÓS-LOGIN COM RELÓGIO E BOTÃO DE AÇÃO -->
         <section id="postLoginView" class="hidden w-full max-w-4xl fade-in space-y-6">
             
-            <!-- Banner de Boas-vindas -->
+            <!-- Banner de Boas-vindas e Ações -->
             <div class="bg-gradient-to-r from-indigo-900/40 via-purple-900/20 to-slate-900 border border-indigo-500/30 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
                 <div class="flex items-center gap-4 text-center sm:text-left">
-                    <div class="h-16 w-16 rounded-full bg-indigo-600/30 border-2 border-indigo-400/50 flex items-center justify-center text-indigo-300 text-2xl font-bold">
+                    <div class="h-16 w-16 rounded-full bg-indigo-600/30 border-2 border-indigo-400/50 flex items-center justify-center text-indigo-300 text-2xl font-bold shrink-0">
                         <i class="fa-solid fa-user-shield"></i>
                     </div>
                     <div>
                         <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-1">
                             Acesso Autorizado
                         </span>
-                        <h2 class="text-2xl font-bold text-white">Bem-vindo, <span id="userDisplay" class="text-indigo-400">admin</span>!</h2>
-                        <p class="text-slate-400 text-sm">Você está autenticado na área restrita pós-login.</p>
+                        <h2 class="text-2xl font-bold text-white">Página Pós-Login</h2>
+                        <p class="text-slate-400 text-sm">Bem-vindo, <span id="userDisplay" class="text-indigo-400 font-semibold">admin</span>! Você está autenticado.</p>
                     </div>
                 </div>
 
                 <button onclick="handleLogout()" 
-                    class="bg-slate-800 hover:bg-red-500/20 hover:text-red-400 text-slate-300 border border-slate-700 hover:border-red-500/40 px-4 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center gap-2">
+                    class="bg-slate-800 hover:bg-red-500/20 hover:text-red-400 text-slate-300 border border-slate-700 hover:border-red-500/40 px-4 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center gap-2 shrink-0">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     <span>Sair (Logout)</span>
                 </button>
             </div>
 
-            <!-- Cards Informativos -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl">
-                    <div class="flex items-center justify-between text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">
-                        <span>Usuário Ativo</span>
-                        <i class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+            <!-- CARD DE DESTAQUE: RELÓGIO DIGITAL & BOTÃO PRINCIPAL DE AÇÃO -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- COMPONENTE 1: RELÓGIO DIGITAL -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col items-center justify-center text-center relative overflow-hidden group shadow-lg">
+                    <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl group-hover:bg-indigo-500/20 transition-all"></div>
+                    
+                    <div class="flex items-center gap-2 text-indigo-400 text-xs font-semibold uppercase tracking-wider mb-3">
+                        <i class="fa-regular fa-clock text-base animate-pulse"></i>
+                        <span>Relógio em Tempo Real</span>
                     </div>
-                    <p class="text-xl font-bold text-white">admin</p>
-                    <p class="text-xs text-slate-500 mt-1">Nível: Administrador Principal</p>
+
+                    <!-- Display das Horas -->
+                    <div id="digitalClock" class="font-mono-clock text-4xl sm:text-5xl font-bold text-white tracking-wider my-1 bg-gradient-to-r from-white via-indigo-100 to-indigo-300 bg-clip-text text-transparent">
+                        00:00:00
+                    </div>
+
+                    <!-- Display da Data -->
+                    <div id="digitalDate" class="text-xs text-slate-400 mt-2 font-medium capitalize">
+                        Carregando data...
+                    </div>
                 </div>
 
-                <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl">
-                    <div class="flex items-center justify-between text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">
-                        <span>Telemetria Analytics</span>
-                        <i class="fa-solid fa-chart-line text-indigo-400 text-base"></i>
+                <!-- COMPONENTE 2: BOTÃO INTERATIVO DA PÁGINA PÓS-LOGIN -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden shadow-lg">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-semibold text-indigo-400 uppercase tracking-wider flex items-center gap-2">
+                                <i class="fa-solid fa-bolt"></i> Ação Interativa
+                            </span>
+                            <span id="clickCounterBadge" class="text-[10px] font-mono bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-full border border-indigo-500/30">
+                                Clicks: 0
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-1">Registrar Evento Customizado</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed mb-4">
+                            Clique no botão abaixo para disparar uma ação interativa imediata no script <code class="text-slate-300">analytics.js</code>.
+                        </p>
                     </div>
-                    <p class="text-xl font-bold text-white" id="eventCount">0 Eventos</p>
-                    <p class="text-xs text-slate-500 mt-1">Via analytics.js</p>
+
+                    <!-- BOTÃO SOLICITADO -->
+                    <button onclick="handleInteractiveButtonClick()" id="btnAction"
+                        class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-emerald-600/20 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 text-sm">
+                        <i class="fa-solid fa-paper-plane text-xs"></i>
+                        <span>Executar Ação & Track Analytics</span>
+                    </button>
                 </div>
 
-                <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl">
-                    <div class="flex items-center justify-between text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">
-                        <span>Rota Atual</span>
-                        <i class="fa-solid fa-compass text-violet-400 text-base"></i>
-                    </div>
-                    <p class="text-xl font-bold text-white">/pos-login</p>
-                    <p class="text-xs text-slate-500 mt-1">Ambiente seguro</p>
-                </div>
             </div>
 
-            <!-- Dashboard / Painel de Logs de Analytics -->
+            <!-- DASHBOARD DE EVENTOS DO ANALYTICS.JS -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-terminal text-indigo-400"></i>
-                        <h3 class="font-semibold text-white">Eventos Registrados pelo Analytics.js</h3>
+                        <h3 class="font-semibold text-white">Log de Eventos (analytics.js)</h3>
                     </div>
-                    <button onclick="triggerSimulatedAction()" class="text-xs bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 border border-indigo-500/30 px-3 py-1.5 rounded-lg transition-all">
-                        + Simular Clique/Ação
-                    </button>
+                    <span id="eventCount" class="text-xs bg-slate-800 text-slate-300 border border-slate-700 px-2.5 py-1 rounded-lg font-mono">
+                        0 Eventos
+                    </span>
                 </div>
                 
-                <div id="analyticsLogList" class="space-y-2 max-h-52 overflow-y-auto pr-2 text-xs font-mono">
-                    <!-- Logs entram aqui -->
+                <div id="analyticsLogList" class="space-y-2 max-h-56 overflow-y-auto pr-2 text-xs font-mono">
+                    <!-- Logs gerados dinamicamente -->
                 </div>
             </div>
 
@@ -208,27 +232,56 @@
 
     </main>
 
-    <!-- FOOTER COM CONSOLE VISÍVEL DE LOGS DE ANALYTICS -->
+    <!-- FOOTER DA PÁGINA -->
     <footer class="border-t border-slate-800 bg-slate-900/60 backdrop-blur-sm p-4 text-slate-400 text-xs">
         <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
             <div class="flex items-center gap-2">
                 <i class="fa-solid fa-chart-simple text-indigo-400"></i>
-                <span>Monitoramento Ativo: <strong class="text-slate-200">analytics.js</strong></span>
+                <span>Script Carregado: <strong class="text-slate-200">analytics.js</strong></span>
             </div>
-            <p class="text-slate-500">Abra o DevTools (F12) para inspecionar os eventos no console em tempo real.</p>
+            <p class="text-slate-500">Credenciais ativas: admin / 1234. Abra o Console (F12) para os registros de telemetria.</p>
         </div>
     </footer>
 
-    <!-- LÓGICA E SCRIPT DE AUTENTICAÇÃO E ANALYTICS -->
+    <!-- LÓGICA EM JAVASCRIPT -->
     <script>
+        let clickCount = 0;
+
+        // --- LÓGICA DO RELÓGIO DIGITAL EM TEMPO REAL ---
+        function updateClock() {
+            const now = new Date();
+            
+            // Formatando Hora (HH:MM:SS)
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            const clockElement = document.getElementById('digitalClock');
+            if (clockElement) {
+                clockElement.textContent = `${hours}:${minutes}:${seconds}`;
+            }
+
+            // Formatando Data
+            const options = { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' };
+            const dateStr = now.toLocaleDateString('pt-BR', options);
+            const dateElement = document.getElementById('digitalDate');
+            if (dateElement) {
+                dateElement.textContent = dateStr;
+            }
+        }
+
+        // Inicia o relógio
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // --- INICIALIZAÇÃO E EVENTOS ---
         document.addEventListener('DOMContentLoaded', () => {
-            // Dispara visualização de página inicial
             if (window.AnalyticsEngine) {
                 AnalyticsEngine.track('page_view', { page: '/login' });
             }
         });
 
-        // Atualização da lista visual de logs do Analytics
+        // Ouve eventos disparados pelo analytics.js para atualizar o painel visual
         window.addEventListener('analytics_event_tracked', (e) => {
             const logContainer = document.getElementById('analyticsLogList');
             const eventCount = document.getElementById('eventCount');
@@ -243,10 +296,11 @@
             const logItem = document.createElement('div');
             logItem.className = "p-2.5 rounded bg-slate-950 border border-slate-800 flex items-center justify-between text-slate-300 fade-in";
             
-            // Cores por tipo de evento
+            // Cores estilizadas por tipo de evento
             let badgeColor = "text-emerald-400 bg-emerald-950/60 border-emerald-800/50";
             if (ev.event === 'login_failure') badgeColor = "text-red-400 bg-red-950/60 border-red-800/50";
             if (ev.event === 'login_attempt') badgeColor = "text-amber-400 bg-amber-950/60 border-amber-800/50";
+            if (ev.event === 'button_click_action') badgeColor = "text-cyan-400 bg-cyan-950/60 border-cyan-800/50";
 
             logItem.innerHTML = `
                 <div class="flex items-center gap-2 truncate pr-2">
@@ -259,7 +313,7 @@
             logContainer.prepend(logItem);
         });
 
-        // Função principal de validação de Login
+        // --- VALIDAÇÃO DE LOGIN (admin / 1234) ---
         function handleLogin(event) {
             event.preventDefault();
 
@@ -271,17 +325,17 @@
 
             errorBox.classList.add('hidden');
 
-            // Registrar tentativa de login
+            // Tracking da tentativa
             AnalyticsEngine.track('login_attempt', { username: usernameInput });
 
-            // Feedback visual no botão
+            // Feedback visual de carregamento
             btn.disabled = true;
             btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> Autenticando...`;
 
             setTimeout(() => {
-                // Validação Estrita: admin / 1234
+                // Validação das credenciais exigidas
                 if (usernameInput === 'admin' && passwordInput === '1234') {
-                    // Login Válido
+                    // Login com sucesso
                     AnalyticsEngine.track('login_success', { username: usernameInput });
                     AnalyticsEngine.track('page_view', { page: '/pos-login' });
 
@@ -289,10 +343,10 @@
                     loginCard.classList.add('hidden');
                     document.getElementById('postLoginView').classList.remove('hidden');
                 } else {
-                    // Login Inválido
+                    // Falha no login
                     AnalyticsEngine.track('login_failure', { 
                         username: usernameInput, 
-                        reason: 'invalid_credentials' 
+                        reason: 'credenciais_invalidas' 
                     });
 
                     errorBox.classList.remove('hidden');
@@ -300,13 +354,25 @@
                     setTimeout(() => loginCard.classList.remove('shake'), 500);
                 }
 
-                // Restaurar estado do botão
                 btn.disabled = false;
                 btn.innerHTML = `<span>Entrar no Sistema</span><i class="fa-solid fa-arrow-right text-xs"></i>`;
-            }, 500);
+            }, 400);
         }
 
-        // Função de Logout
+        // --- AÇÃO DO BOTÃO NA PÁGINA PÓS-LOGIN ---
+        function handleInteractiveButtonClick() {
+            clickCount++;
+            document.getElementById('clickCounterBadge').textContent = `Clicks: ${clickCount}`;
+
+            // Dispara evento via analytics.js
+            AnalyticsEngine.track('button_click_action', {
+                page: '/pos-login',
+                totalClicks: clickCount,
+                actionTime: new Date().toLocaleTimeString('pt-BR')
+            });
+        }
+
+        // --- LOGOUT ---
         function handleLogout() {
             AnalyticsEngine.track('logout', { username: 'admin' });
             AnalyticsEngine.track('page_view', { page: '/login' });
@@ -314,16 +380,8 @@
             document.getElementById('postLoginView').classList.add('hidden');
             document.getElementById('loginView').classList.remove('hidden');
             
-            // Limpa campos e erros
             document.getElementById('password').value = '';
             document.getElementById('errorMessage').classList.add('hidden');
-        }
-
-        // Simulação de eventos extras na área pós-login
-        function triggerSimulatedAction() {
-            const actions = ['download_relatorio', 'filtrar_dashboard', 'atualizar_perfil'];
-            const action = actions[Math.floor(Math.random() * actions.length)];
-            AnalyticsEngine.track(action, { section: 'pos-login-dashboard' });
         }
     </script>
 </body>
